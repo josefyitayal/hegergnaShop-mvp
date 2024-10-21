@@ -6,14 +6,13 @@ import { Box, Truck, ArrowLeft, ArrowRight } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import { redirect, useRouter } from 'next/navigation'
 
-function StepOne({saveData}) {
+function StepOne({ handleNext }) {
     // what category does the user want
     const router = useRouter()
     const [data, setData] = useState("")
-    function handleNext() {
+    function handleOnClick() {
         if(data) {
-            saveData("step1", JSON.stringify(data))
-            router.push("/onboard?step=2")
+            handleNext("step1", data)
         }
     }
     return (
@@ -54,7 +53,7 @@ function StepOne({saveData}) {
                     <ArrowLeft />
                     <p>Back</p>
                 </Button>
-                <Button disabled={data ? false : true} variant="ghost" className="flex gap-2 items-center" onClick={handleNext}>
+                <Button disabled={data ? false : true} variant="ghost" className="flex gap-2 items-center" onClick={handleOnClick}>
                     <p>Next</p>
                     <ArrowRight />
                 </Button>

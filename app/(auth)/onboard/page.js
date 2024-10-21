@@ -3,19 +3,20 @@
 import StepOne from "@/components/onboardSteps/StepOne";
 import StepThree from "@/components/onboardSteps/StepThree";
 import StepTwo from "@/components/onboardSteps/StepTwo";
-import { setSaleType } from "@/lib/actions/user.action";
+import { CreateStore } from "@/lib/actions/store.action";
+import { getUserByClerkId, setPlanByClerkId, setSaleType, updateUserIsActiveByClerkId } from "@/lib/actions/user.action";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 
 function OnBoard() {
-  const { user } = useAuth;
+  const { userId } = useAuth();
   const router = useRouter()
   const searchParams = useSearchParams()
   const step = searchParams.get("step")
-
-  if (!user) router.push("/sign-up")
+  const [user, setUser] = useState("")
+  // if (!userId) router.push("/sign-up")
 
   useEffect(() => {
     if (!step) {
@@ -23,21 +24,63 @@ function OnBoard() {
     }
   }, [step])
 
-  const saveDate = async (key, value) => {
-    if (key === "step1") {
-      await setSaleType(user.id, value)
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const fetchedUser = await getUserByClerkId(userId)
+    
+        setUser(fetchedUser)
+      }catch(error) {
+        console.log(error)
+      }
     }
-    localStorage.setItem(key, value)
+    fetchUser()
+    console.log(user, "========= === = = =")
+  },[])
+
+  const handleNext = async (whatStep, data) => {
+    if (whatStep === "step1") {
+      console.log("-----", step, "--------", data, "-------1")
+      await setSaleType(userId, data)
+      router.push('/onboard?step=2')
+
+    }else if (whatStep === "step2") {
+      console.log("-----", step, "--------", data, "-------2")
+      if (data !== "later") {
+        const updatedPlanUser = await setPlanByClerkId(userId)
+        if (!updatedPlanUser) throw new Error("plan is not updated or change") 
+        console.log(updatedPlanUser)
+        router.push('/onboard?step=3')
+      }
+
+    }else if (whatStep === "step3") {
+      console.log("-----", step, "--------", data, "-------3")
+      try {
+        const store = await CreateStore(data)
+        if (store) {
+          const updatedIsActiveUser = await updateUserIsActiveByClerkId(userId, true)
+          if (updatedIsActiveUser) {
+            router.push(`/dashboard/${store._id}`)
+          }else {
+            throw new Error("trying to update user isActive but faild")
+          }
+        }
+      }catch(error) {
+        console.log("error---error---error---error---", error)
+      }
+    }else {
+      console.log("brah......")
+    }
   }
 
   const renderSteps = () => {
     switch (step) {
       case "1":
-        return <StepOne saveData={saveDate}/>
+        return <StepOne handleNext={handleNext}/>
       case "2":
-        return <StepTwo saveData={saveDate}/>
+        return <StepTwo handleNext={handleNext}/>
       case "3":
-        return <StepThree saveData={saveDate}/>
+        return <StepThree handleNext={handleNext}/>
     }
   };
   return (

@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState } from 'react'
-import PricingCard from '../root/PricingCard'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
-import { Box, Truck, ArrowLeft, ArrowRight } from 'lucide-react'
+import {  ArrowLeft, ArrowRight } from 'lucide-react'
+import OnboardingPricingCard from '../root/OnboardingPricingCard'
 
 const subscriptions = [
     {
@@ -24,7 +24,8 @@ const subscriptions = [
                 "2% transaction fee",
             ],
             mostPopular: true,
-            href: "/payment/subscription?plan=Basic",
+            fromPricing_link: "/sign-up?plan=Basic",
+            fromSignUp_link: "/payment/subscription?plan=Basic",
             cta: "Start Free Trail",
         },
         limitation: {
@@ -51,7 +52,8 @@ const subscriptions = [
                 "1% transaction fee",
             ],
             mostPopular: false,
-            href: "/payment/subscription?plan=Plus",
+            fromPricing_link: "/sign-up?plan=Plus",
+            fromSignUp_link: "/payment/subscription?plan=Plus",
             cta: "Start Free Trail",
         },
         limitation: {
@@ -78,22 +80,38 @@ const subscriptions = [
                 "0.5% transaction fee",
             ],
             mostPopular: false,
-            href: "/payment/subscription?plan=Plus",
+            fromPricing_link: "/sign-up?plan=Custom",
+            fromSignUp_link: "/payment/subscription?plan=Custom",
             cta: "Contact Us",
         },
     },
 ];
 
-function StepTwo({ saveData }) {
+function StepTwo({ handleNext }) {
     // plan selection
 
     const router = useRouter()
     const [data, setData] = useState("")
     const [monthly, setMonthly] = useState(true);
-    function handleNext() {
-        saveData("step2", JSON.stringify(data))
-        router.push("/onboard?step=3")
+    const [isButtonClicked, setIsButtonClicked] = useState(false);
+
+    function handleOnClick() {
+        setData("later")
+        setIsButtonClicked(true)
     }
+
+    function startTrailClick(plan) {
+        setData(plan)
+        setIsButtonClicked(true)
+    }
+
+    useEffect(() => {
+        if (isButtonClicked && Object.keys(data).length > 0) {
+            handleNext("step2", data);
+            setIsButtonClicked(false); // Reset the button click state
+        }
+    }, [data, isButtonClicked]);
+
     return (
         <div className='border border-gray-600 rounded-md shadow-md shadow-gray-800 p-5 flex flex-col gap-5 bg-background h-fit'>
             <div className='flex flex-col items-center gap-2'>
@@ -106,14 +124,14 @@ function StepTwo({ saveData }) {
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-10 space-y-3'>
                 {subscriptions.map((plan, index) => (
-                    <PricingCard
+                    <OnboardingPricingCard 
                         key={index}
-                        id={plan.id}
-                        name={plan.name}
-                        audience={plan.audience}
-                        price={plan.price}
-                        displaySettings={plan.displaySettings}
-                        monthly={monthly}
+                        name={plan.name} 
+                        audience={plan.audience} 
+                        price={plan.price} 
+                        displaySettings={plan.displaySettings} 
+                        monthly={monthly} 
+                        startTrailClick={startTrailClick}
                     />
                 ))}
             </div>
@@ -122,7 +140,7 @@ function StepTwo({ saveData }) {
                     <ArrowLeft />
                     <p>Back</p>
                 </Button>
-                <Button variant="ghost" className="flex gap-2 items-center" onClick={handleNext}>
+                <Button variant="ghost" className="flex gap-2 items-center" onClick={handleOnClick}>
                     <p>Later</p>
                     <ArrowRight />
                 </Button>

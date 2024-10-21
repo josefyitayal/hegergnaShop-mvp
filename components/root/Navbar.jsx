@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/sheet"
 import { Menu } from 'lucide-react'
 import { Button } from '../ui/button'
-import { useAuth } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server';
 
 function Navbar() {
-    const { isSignedIn } = useAuth;
+    const {userId} = auth()
+    console.log("-------", userId)
     return (
         <div className='py-4 px-8 flex justify-between items-center h-16'>
             <Link href="/" className='flex gap-3 items-center'>
@@ -27,7 +28,7 @@ function Navbar() {
                 <Link href="about-us" className='text-gray-300 hover:text-gray-100 text-lg font-semibold'>About us</Link>
             </nav>
             <div className='flex items-center gap-3'>
-                {isSignedIn ? (
+                {userId ? (
                     <>
                         <Button asChild>
                             <Link href={"/dashboard"}>Dashboard</Link>
@@ -59,7 +60,7 @@ function Navbar() {
                                 <Link href="blog" className='text-gray-300 hover:text-gray-100 text-lg font-semibold'>Blog</Link>
                                 <Link href="about-us" className='text-gray-300 hover:text-gray-100 text-lg font-semibold'>About us</Link>
                                 <div className='w-full flex justify-center gap-3'>
-                                    {isSignedIn ? (
+                                    {userId ? (
                                         <>
                                             <Button asChild>
                                                 <Link href={"/dashboard"}>Dashboard</Link>

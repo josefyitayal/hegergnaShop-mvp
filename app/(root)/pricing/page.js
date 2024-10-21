@@ -22,7 +22,8 @@ const subscriptions = [
               "2% transaction fee",
           ],
           mostPopular: true,
-          href: "/payment/subscription?plan=Basic",
+          fromPricing_link: "/sign-up?plan=Basic",
+          fromSignUp_link: "/payment/subscription?plan=Basic",
           cta: "Start Free Trail",
       },
       limitation: {
@@ -49,7 +50,8 @@ const subscriptions = [
               "1% transaction fee",
           ],
           mostPopular: false,
-          href: "/payment/subscription?plan=Plus",
+          fromPricing_link: "/sign-up?plan=Plus",
+          fromSignUp_link: "/payment/subscription?plan=Plus",
           cta: "Start Free Trail",
       },
       limitation: {
@@ -76,7 +78,8 @@ const subscriptions = [
               "0.5% transaction fee",
           ],
           mostPopular: false,
-          href: "/payment/subscription?plan=Plus",
+          fromPricing_link: "/sign-up?plan=Custom",
+          fromSignUp_link: "/payment/subscription?plan=Custom",
           cta: "Contact Us",
       },
   },
@@ -112,6 +115,7 @@ function PricingPage() {
           <PricingCard
             key={index}
             id={plan.id}
+            from={"pricing"}
             name={plan.name}
             audience={plan.audience}
             price={plan.price}

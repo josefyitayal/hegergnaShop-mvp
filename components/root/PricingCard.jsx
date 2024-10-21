@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Button } from '../ui/button'
 import { Check } from 'lucide-react'
+  
 
 function PricingCard({id, name, audience, price, displaySettings, monthly}) {
   return (
@@ -19,9 +20,9 @@ function PricingCard({id, name, audience, price, displaySettings, monthly}) {
             </ul>
         </div>
         <div className='w-full'>
-            <Button asChild className="w-full">
-                <Link href={`/sign-up?from=pricing&plan=${id}`}>{displaySettings.cta}</Link>
-            </Button>
+                <Button asChild className="w-full">
+                    <Link href={displaySettings.fromPricing_link}>{displaySettings.cta}</Link>
+                </Button>
             <p className='font-medium text-center text-sm p-1'>Free Trial for 3 Days, then {monthly ? price.month : price.year} Birr/month</p>
         </div>
     </div>

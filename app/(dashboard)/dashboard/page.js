@@ -11,7 +11,7 @@ async function page() {
     if (isActive) {
         const store = await getStoreByClerkId(clerkUser.id)
         if (!store) throw new Error("not store here in dashboard")
-        // router.push(`/dashboard/${store._id}`)
+        //router.push(`/dashboard/${store._id}`)
         redirect(`/dashboard/${store._id}`)
     }else {
         redirect("/onboard?step=1")
