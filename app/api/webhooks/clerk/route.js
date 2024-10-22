@@ -29,9 +29,6 @@ export async function POST(req) {
 
   // Get the body
   const payload = await req.json();
-  if (!payload) {
-    return new Response('Empty payload', { status: 400 });
-  }
   const body = JSON.parse(payload);
 
 
